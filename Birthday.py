@@ -1,7 +1,6 @@
 from datetime import datetime
 
 class Birthday:
-
     # Some data for this object: the number of days in each month.
     # For simplicity, we ignore leap years and keep February at 28.
     days_in_month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
@@ -11,58 +10,64 @@ class Birthday:
         and if they are out of range, it assigns a default value of
         January 1."""
         # Protect month value
-        if month >= 1 and month <= 12:
+        if 1 <= month <= 12:
             self.__month = month
         else:
-            # In case of out of range month, default to January
+            # In case of out-of-range month, default to January
             self.__month = 1
-        # At this point we have a legit month value 1-12.
-        # Protect day value; use -1 in array to synchronize months
-        if day >= 1 and day <= Birthday.days_in_month[month - 1]:
+
+        # Protect day value (use –1 in array to sync months)
+        if 1 <= day <= Birthday.days_in_month[self.__month - 1]:
             self.__day = day
         else:
-            # In case of out of range day, default is 1st of month
+            # In case of out-of-range day, default to 1st of month
             self.__day = 1
     # end basic constructor
 
     def set_day(self, day):
-        """Mutator for day. It only changes the day value if the
-        passed argument is within a valid range for the given month."""
-        if day > 0 and day <= Birthday.days_in_month[self.__month-1]:
+        """Mutator for day. Only changes the day if the
+        passed argument is within the valid range for the month."""
+        if 1 <= day <= Birthday.days_in_month[self.__month - 1]:
             self.__day = day
     # end set_day
 
-    # Accessor for __month
     def get_month(self):
         return self.__month
 
-    # Accessor for __day
     def get_day(self):
         return self.__day
 
-    # Compute days to birthday
+    def set_month(self, month):
+        """Mutator for month. Only changes the month if 1 ≤ month ≤ 12."""
+        if 1 <= month <= 12:
+            self.__month = month
+    # end set_month
+
     def days_until(self):
-        # obtain today's date
-        # extract month and day
-        # subtract from birthday
-        # return # of days
+        # 1) get today's month/day as a day-of-year
         today = datetime.today()
-        # COMPLETE THIS FOR YOUR ASSIGNMENT
-        
+        d_t = self.day_in_year(today.month, today.day)
+
+        # 2) get birthday's month/day as a day-of-year
+        d_b = self.day_in_year(self.get_month(), self.get_day())
+
+        # 3) compute difference; if today or already passed, wrap around a year
+        diff = d_b - d_t
+        if diff <= 0:
+            diff = 365 + diff
+
+        # 4) return the one final result
+        return diff
+    # end days_until
+
     def day_in_year(self, month, day):
-        """calculates the day number within the year corresponding to a given 
-        date (month, day), assuming that February has 28 days always."""
+        """Calculates the day number within the year for a given
+        date (month, day), assuming February has 28 days."""
         count = 0
-        for i in range(month-1):
+        for i in range(month - 1):
             count += Birthday.days_in_month[i]
         return count + day
 
     def __str__(self):
         """String representation for the object"""
         return f"[ {self.get_month()}/{self.get_day()} ]"
-    
-
-demo = Birthday(6,29)
-
-print(demo.day_in_year(6,29)) # d_b
-print(demo.day_in_year(4,29)) # d_t
